@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, JWT_LOCAL_STORAGE_KEY } from '../config';
 
 export interface DashboardStats {
   totalProducts: number;
@@ -67,7 +67,7 @@ class AdminDashboardApiService {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${localStorage.getItem(JWT_LOCAL_STORAGE_KEY)}`,
       },
     });
 
@@ -92,7 +92,7 @@ class AdminDashboardApiService {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${localStorage.getItem(JWT_LOCAL_STORAGE_KEY)}`,
       },
     });
 
@@ -113,7 +113,7 @@ class AdminDashboardApiService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem(JWT_LOCAL_STORAGE_KEY)}`,
         },
       }
     );
@@ -130,7 +130,7 @@ class AdminDashboardApiService {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${localStorage.getItem(JWT_LOCAL_STORAGE_KEY)}`,
       },
     });
 

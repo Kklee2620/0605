@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { OrderStatus } from '@prisma/client';
+import { OrderStatus, Prisma } from '@prisma/client'; // Import Prisma
 import * as ExcelJS from 'exceljs';
 import * as PDFDocument from 'pdfkit';
 import * as nodemailer from 'nodemailer';
@@ -22,7 +22,7 @@ export class AdminOrdersService {
     const skip = (page - 1) * limit;
     
     // Xây dựng điều kiện tìm kiếm
-    const where: any = {};
+    const where: Prisma.OrderWhereInput = {};
     
     if (status) {
       where.status = status;
@@ -349,14 +349,24 @@ export class AdminOrdersService {
   }
 
   private async sendStatusUpdateEmail(order: any) {
+    const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_SECURE, SMTP_FROM } = process.env;
+
+    if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS || !SMTP_FROM) {
+      console.error(
+        'SMTP environment variables are not fully configured. Skipping email notification.',
+        { SMTP_HOST_SET: !!SMTP_HOST, SMTP_PORT_SET: !!SMTP_PORT, SMTP_USER_SET: !!SMTP_USER, SMTP_PASS_SET: !!SMTP_PASS, SMTP_FROM_SET: !!SMTP_FROM }
+      );
+      return;
+    }
+
     // Tạo transporter
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.example.com',
-      port: parseInt(process.env.SMTP_PORT || '587', 10),
-      secure: process.env.SMTP_SECURE === 'true',
+      host: SMTP_HOST,
+      port: parseInt(SMTP_PORT, 10),
+      secure: SMTP_SECURE === 'true', // Convert string 'true' to boolean
       auth: {
-        user: process.env.SMTP_USER || 'user@example.com',
-        pass: process.env.SMTP_PASS || 'password',
+        user: SMTP_USER,
+        pass: SMTP_PASS,
       },
     });
 
