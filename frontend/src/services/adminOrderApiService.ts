@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, JWT_LOCAL_STORAGE_KEY } from '../config';
 
 export interface OrderItem {
   id: string;
@@ -78,7 +78,8 @@ class AdminOrderApiService {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${localStorage.getItem(JWT_LOCAL_STORAGE_KEY)}`,
+        Authorization: `Bearer ${localStorage.getItem(JWT_LOCAL_STORAGE_KEY)}`,
       },
     });
 
@@ -94,7 +95,7 @@ class AdminOrderApiService {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${localStorage.getItem(JWT_LOCAL_STORAGE_KEY)}`,
       },
     });
 
@@ -114,7 +115,7 @@ class AdminOrderApiService {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${localStorage.getItem(JWT_LOCAL_STORAGE_KEY)}`,
       },
       body: JSON.stringify({ status, sendEmail }),
     });
@@ -146,7 +147,7 @@ class AdminOrderApiService {
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${localStorage.getItem(JWT_LOCAL_STORAGE_KEY)}`,
       },
     });
 

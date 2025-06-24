@@ -36,8 +36,8 @@ async function main() {
   });
   console.log('Created regular user:', user.email);
 
-  // Tạo các danh mục sản phẩm
-  const categories = ['Electronics', 'Clothing', 'Books', 'Home', 'Sports'];
+  // Define canonical product categories (aligned with frontend/src/types.ts)
+  const categories: string[] = ['Furniture', 'Lighting', 'Home Decor', 'Appliances', 'Electronics', 'Apparel', 'Books', 'Kitchenware'];
 
   // Tạo các sản phẩm mẫu
   for (let i = 1; i <= 10; i++) {

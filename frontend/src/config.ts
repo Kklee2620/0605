@@ -1,5 +1,8 @@
-// In a real CRA or Vite app, you'd use environment variables like process.env.REACT_APP_API_URL
-// For the current setup (CDN, no build process), we'll hardcode it or make it configurable here.
-// When backend runs on port 3001, and frontend on port 5173 (via Vite)
-export const API_BASE_URL = 'http://localhost:3001';
+// Vite exposes environment variables on `import.meta.env`
+// Variables prefixed with VITE_ are exposed to client-side code.
+// See: https://vitejs.dev/guide/env-and-mode.html
+
+// Default to localhost:3001 if the env variable is not set,
+// useful for local development if .env file is missed.
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 export const JWT_LOCAL_STORAGE_KEY = 'modernstore-jwt';

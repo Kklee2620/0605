@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from '@prisma/client';
+import { Product, Prisma } from '@prisma/client'; // Import Prisma
 
 @Injectable()
 export class ProductsService {
@@ -15,7 +15,7 @@ export class ProductsService {
   }
 
   async findAll(category?: string, search?: string): Promise<Product[]> {
-    const where: any = {
+    const where: Prisma.ProductWhereInput = {
       isActive: true,
     };
 
@@ -97,14 +97,45 @@ export class ProductsService {
     return categories.map(c => c.category);
   }
 
-  async updateStock(id: string, quantity: number): Promise<Product> {
-    return this.prisma.product.update({
-      where: { id },
+  async updateStock(id: string, quantityToDecrement: number): Promise<Product> {
+    // Ensure quantityToDecrement is positive
+    if (quantityToDecrement <= 0) {
+      throw new Error('Quantity to decrement must be positive.');
+    }
+
+    const updatedProductRecord = await this.prisma.product.updateMany({
+      where: {
+        id: id,
+        stock: {
+          gte: quantityToDecrement, // Only update if stock is sufficient
+        },
+      },
       data: {
         stock: {
-          decrement: quantity,
+          decrement: quantityToDecrement,
         },
       },
     });
+
+    if (updatedProductRecord.count === 0) {
+      // Check if the product exists to give a more specific error
+      const productExists = await this.prisma.product.findUnique({ where: { id } });
+      if (!productExists) {
+        throw new NotFoundException(`Product with ID ${id} not found.`);
+      }
+      // If product exists but count is 0, it means stock was insufficient
+      throw new Error( // Consider a custom exception class e.g., InsufficientStockException
+        `Insufficient stock for product ID ${id} to decrement by ${quantityToDecrement}.`,
+      );
+    }
+
+    // Fetch and return the updated product
+    const product = await this.prisma.product.findUnique({ where: { id } });
+    if (!product) {
+        // This case should ideally not be reached if updateMany was successful
+        // and product wasn't deleted concurrently.
+        throw new NotFoundException(`Product with ID ${id} not found after stock update.`);
+    }
+    return product;
   }
 }
